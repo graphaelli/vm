@@ -7,7 +7,7 @@
 #
 rpm -i /tmp/pkg/*rpm
 
-# Use Oracle java (disabled since rpm hardcodes full path to openjdk apparently)
+# Use Oracle java (disabled since zk-server rpm hardcodes full path to openjdk apparently)
 #alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_71/bin/java 1
 #update-alternatives --set java /usr/java/jdk1.7.0_71/bin/java
 
@@ -37,6 +37,9 @@ server.2=192.168.33.52:2182:2183
 server.3=192.168.33.53:2182:2183
 EOF
 
+#
+# Write zookeeper id, comes from environment setup in vagrant.sh
+#
 cat >> /var/lib/zookeeper/data/myid <<EOF
 $SEQUENCE_ID
 EOF
