@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+KAFKA_HOSTS = 4
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    (1..KAFKA_HOSTS).each do |i|
+        config.vm.define "kk#{i}" do |kk|
+            kk.ssh.forward_agent = true
+            kk.vm.box = "chef/fedora-20"
+            kk.vm.box_check_update = false
+            kk.vm.hostname = "kk#{i}"
+            kk.vm.network "forwarded_port", guest: 9092, host: "#{i + 6000}"
+            kk.vm.network "private_network", ip: "192.168.33.#{i + 60}"
+            kk.vm.synced_folder "./", "/vagrant", disabled: true
+            kk.vm.synced_folder "pkg/", "/tmp/pkg", create: true, mount_options: ["ro",]
+            kk.vm.provider "virtualbox" do |vb|
+                vb.customize ["modifyvm", :id, "--memory", "1024"]
+            end
+
+            kk.vm.provision "shell", inline: "echo export SEQUENCE_ID=$1 >> /etc/profile.d/vagrant.sh", args: ["#{i}"]
+            kk.vm.provision "shell", path: "provision.sh"
+        end
+    end
+end
