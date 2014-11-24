@@ -12,6 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             zk.vm.box = "chef/fedora-20"
             zk.vm.box_check_update = false
             zk.vm.hostname = "zk#{i}"
+            zk.vm.network "forwarded_port", guest: 2181, host: "#{i + 5000}"
             zk.vm.network "private_network", ip: "192.168.33.#{i + 50}"
             zk.vm.synced_folder "./", "/vagrant", disabled: true
             zk.vm.synced_folder "pkg/", "/tmp/pkg", create: true, mount_options: ["ro",]
